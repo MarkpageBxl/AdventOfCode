@@ -3,6 +3,12 @@ Markus Lindström <markus@markpage.be>
 
 Solutions repository for the Advent of Code 2024 challenge.
 
+== Ethics
+
+I deliberately choose not to use any AI-based tools such as Copilot,
+ChatGPT or Mistral/Codestral. I aim to put my own skill set, including
+documentation searches, to the test.
+
 == Languages
 
 Python is by far my favourite scripting language, the one with which
