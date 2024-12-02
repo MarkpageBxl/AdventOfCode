@@ -1,0 +1,10 @@
+= Advent of Code 2024 solutions
+Markus Lindström <markus@markpage.be>
+
+Solutions repository for the Advent of Code 2024 challenge.
+
+== Languages
+
+Python is by far my favourite scripting language, the one with which
+I can yield results the fastest, and a language I have taught at
+university. It is thus my weapon of choice for these challenges.
