@@ -3,6 +3,12 @@ Markus Lindström <markus@markpage.be>
 
 Solutions repository for the Advent of Code 2024 challenge.
 
+== Introduction
+
+This is my very first experience with Advent of Code, so I'm clearly
+not competitive on the global leaderboard. Enjoying myself greatly
+all the same!
+
 == Ethics
 
 I deliberately choose not to use any AI-based tools such as Copilot,
