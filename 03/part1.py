@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import re
 
 MUL_RE = re.compile(r"mul\(([0-9]+),([0-9]+)\)")

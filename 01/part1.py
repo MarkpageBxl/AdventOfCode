@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 l1 = []
 l2 = []
 

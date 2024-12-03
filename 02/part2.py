@@ -1,4 +1,7 @@
+#!/usr/bin/env python
+
 safe_reports = 0
+
 
 def compute_slice_safety(levels: list[int]) -> bool:
     for i in range(len(levels)):
@@ -16,14 +19,15 @@ def compute_safety(levels: list[int]) -> bool:
     i = 0
 
     while i < len(levels) - 1:
-        if (levels[i] < levels[i+1]) != increasing:
+        if (levels[i] < levels[i + 1]) != increasing:
             consistent_delta_sign = False
             break
-        elif not (1 <= abs(levels[i+1] - levels[i]) <= 3):
+        elif not (1 <= abs(levels[i + 1] - levels[i]) <= 3):
             safe_distance = False
             break
         i += 1
     return consistent_delta_sign and safe_distance
+
 
 with open("input") as fp:
     for line in fp:

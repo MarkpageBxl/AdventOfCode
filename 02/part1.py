@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 safe_reports = 0
 
 with open("input") as fp:
@@ -9,14 +11,14 @@ with open("input") as fp:
         i = 0
 
         while i < len(levels) - 1:
-            if (levels[i] < levels[i+1]) != increasing:
+            if (levels[i] < levels[i + 1]) != increasing:
                 consistent_delta_sign = False
                 break
-            elif not (1 <= abs(levels[i+1] - levels[i]) <= 3):
+            elif not (1 <= abs(levels[i + 1] - levels[i]) <= 3):
                 safe_distance = False
                 break
             i += 1
-        
+
         if consistent_delta_sign and safe_distance:
             safe_reports += 1
 
