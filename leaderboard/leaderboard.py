@@ -3,14 +3,23 @@
 import csv
 import json
 import os
+import sqlite3
+from collections.abc import Sequence
 from datetime import datetime, timedelta
+from typing import Any
 
 import pytz
 import requests
 
 LEADERBOARD_URL = "https://adventofcode.com/2024/leaderboard/private/view/4311749.json"
 LEADERBOARD_FILE = "leaderboard.json"
-LEADERBOARD_OUTPUT = "leaderboard.csv"
+LEADERBOARD_OUTPUT_CSV = "leaderboard.csv"
+LEADERBOARD_DB = "leaderboard.sqlite3"
+
+
+def dict_factory(cursor: sqlite3.Cursor, row: Sequence[Any]):
+    fields = [column[0] for column in cursor.description]
+    return {key: value for key, value in zip(fields, row)}
 
 
 def update_leaderboard():
@@ -45,41 +54,102 @@ else:
 with open(LEADERBOARD_FILE) as fp:
     data = json.load(fp)
 
-start = datetime(2024, 12, 1, tzinfo=pytz.timezone("EST"))
-end = datetime(2024, 12, 25, tzinfo=pytz.timezone("EST"))
-dt = start
-days = []
-while dt <= datetime.now(tz=pytz.timezone("Europe/Brussels")) and dt <= end:
-    days.append(dt.day)
-    dt += timedelta(days=1)
+days = range(1, 26)
 
-with open(LEADERBOARD_OUTPUT, "w", newline="") as fp:
-    writer = csv.DictWriter(fp, fieldnames=["id", "name", "day", "part", "ts"])
-    writer.writeheader()
-
+with sqlite3.connect(LEADERBOARD_DB) as conn:
+    conn.execute(
+        """
+            CREATE TABLE IF NOT EXISTS members (
+                id INTEGER PRIMARY KEY,
+                name TEXT NOT NULL
+            )
+        """
+    )
+    conn.execute(
+        """
+            CREATE TABLE IF NOT EXISTS challenges (
+                id INTEGER PRIMARY KEY,
+                day INTEGER NOT NULL,
+                part INTEGER NOT NULL,
+                UNIQUE (day, part)
+            )
+        """
+    )
+    conn.execute(
+        """
+            CREATE TABLE IF NOT EXISTS results (
+                member_id INTEGER NOT NULL,
+                challenge_id INTEGER NOT NULL,
+                ts TEXT,
+                star_index INTEGER,
+                PRIMARY KEY (member_id, challenge_id),
+                FOREIGN KEY (member_id) REFERENCES members (id),
+                FOREIGN KEY (challenge_id) REFERENCES challenges (id)
+            )
+        """
+    )
+    conn.execute("DROP VIEW IF EXISTS leaderboard_vw")
+    conn.execute(
+        """
+            CREATE VIEW leaderboard_vw AS
+            SELECT members.id AS member_id, name, challenges.id AS challenge_id, challenges.day, challenges.part, ts, star_index FROM members
+            INNER JOIN challenges
+            LEFT OUTER JOIN results ON members.id = results.member_id AND results.challenge_id = challenges.id
+            ORDER BY members.id, challenges.day, challenges.part
+        """
+    )
+    conn.execute("DELETE FROM results")
+    conn.execute("DELETE FROM challenges")
+    conn.execute("DELETE FROM members")
+    challenges = {}
+    for day in days:
+        for part in (1, 2):
+            cur = conn.execute(
+                "INSERT INTO challenges VALUES (NULL, ?, ?)", (day, part)
+            )
+            challenges[(day, part)] = cur.lastrowid
     for id, member in data["members"].items():
-        record = {"id": id, "name": member["name"]}
+        member_record = {"id": id, "name": member["name"]}
+        conn.execute("INSERT INTO members VALUES (:id, :name)", member_record)
         for day in days:
-            day = str(day)
-            record["day"] = day
-            if day in member["completion_day_level"]:
+            result = {"member_id": member["id"]}
+            if str(day) in member["completion_day_level"]:
                 dayta = member["completion_day_level"][str(day)]
                 for part in ("1", "2"):
-                    record["part"] = part
+                    result["challenge_id"] = challenges[(day, int(part))]
+                    result["ts"] = None
+                    result["star_index"] = None
                     if part in dayta:
-                        record["ts"] = pytz.timezone("Europe/Brussels").localize(
+                        result["ts"] = pytz.timezone("Europe/Brussels").localize(
                             datetime.fromtimestamp(dayta[part]["get_star_ts"])
                         )
-                    else:
-                        record["ts"] = None
-                    writer.writerow(record)
-            else:
-                for part in ("1", "2"):
-                    record["part"] = part
-                    record["ts"] = None
-                    writer.writerow(record)
+                        result["star_index"] = int(dayta[part]["star_index"])
+                        conn.execute(
+                            "INSERT INTO results VALUES (:member_id, :challenge_id, :ts, :star_index)",
+                            result,
+                        )
 
-print(f"Data successfully written to {LEADERBOARD_OUTPUT}. Here it comes!")
-print()
-with open(LEADERBOARD_OUTPUT) as fp:
-    print(fp.read(), end="")
+print("Data successfully loaded into database:", LEADERBOARD_DB)
+
+with open(LEADERBOARD_OUTPUT_CSV, "w", newline="") as fp:
+    writer = csv.DictWriter(
+        fp,
+        fieldnames=[
+            "member_id",
+            "name",
+            "challenge_id",
+            "day",
+            "part",
+            "ts",
+            "star_index",
+        ],
+    )
+    writer.writeheader()
+    with sqlite3.connect(LEADERBOARD_DB) as conn:
+        conn.row_factory = dict_factory
+        cur = conn.execute(
+            "SELECT member_id, name, challenge_id, day, part, ts, star_index FROM leaderboard_vw WHERE ts IS NOT NULL"
+        )
+        writer.writerows(cur)
+
+print("Data successfully written to file:", LEADERBOARD_OUTPUT_CSV)
