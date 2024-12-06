@@ -1,13 +1,16 @@
-= Advent of Code 2024 solutions
+= Advent of Code solutions
 Markus Lindström <markus@markpage.be>
 
-Solutions repository for the Advent of Code 2024 challenge.
+Solutions repository for the Advent of Code challenges.
 
 == Introduction
 
-This is my very first experience with Advent of Code, so I'm clearly
+2024 is my very first experience with Advent of Code, so I'm clearly
 not competitive on the global leaderboard. Enjoying myself greatly
 all the same!
+
+Since I accidentally solved a problem for 2015 at one point, I figured
+this repo could contain solutions for all AoC editions.
 
 == Ethics
 
