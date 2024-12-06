@@ -44,6 +44,7 @@ for part in (1, 2):
         "part": part,
         "demo_input": demo_input,
         "url": CHALLENGE_URL.format(year=args.year, day=args.day),
+        "fragment": "#part2" if part == 2 else ""
     }
     prog_path = target_dir / f"part{part}.py"
     with open(prog_path, "w") as fp:
