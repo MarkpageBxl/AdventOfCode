@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 
+import argparse
 import csv
 import json
 import os
 import sqlite3
+import sys
 from collections.abc import Sequence
 from datetime import datetime, timedelta
 from typing import Any
@@ -11,8 +13,11 @@ from typing import Any
 import pytz
 import requests
 
-LEADERBOARD_URL = "https://adventofcode.com/2024/leaderboard/private/view/4311749.json"
-LEADERBOARD_FILE = "leaderboard.json"
+USER_ID = 4311749
+LEADERBOARD_URL = (
+    "https://adventofcode.com/{year}/leaderboard/private/view/{user_id}.json"
+)
+LEADERBOARD_JSON = "leaderboard.json"
 LEADERBOARD_OUTPUT_CSV = "leaderboard.csv"
 LEADERBOARD_DB = "leaderboard.sqlite3"
 
@@ -22,11 +27,20 @@ def dict_factory(cursor: sqlite3.Cursor, row: Sequence[Any]):
     return {key: value for key, value in zip(fields, row)}
 
 
-def update_leaderboard():
-    with open("session_cookie") as fp:
-        cookies = {"session": fp.read().strip()}
+def update_leaderboard(year: int):
+    try:
+        with open("session_cookie") as fp:
+            cookies = {"session": fp.read().strip()}
+    except FileNotFoundError:
+        print(
+            "Could not find usable session cookie. Please put it in a file called session_cookie.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
 
-    resp = requests.get(LEADERBOARD_URL, cookies=cookies)
+    resp = requests.get(
+        LEADERBOARD_URL.format(year=year, user_id=USER_ID), cookies=cookies
+    )
     resp.raise_for_status()
     data = resp.json()
 
@@ -34,24 +48,31 @@ def update_leaderboard():
         json.dump(data, fp, indent=2)
 
 
+parser = argparse.ArgumentParser()
+parser.add_argument("year", type=int)
+args = parser.parse_args()
+
 grace_period = datetime.now() - timedelta(minutes=15)
 grace_period_ts = grace_period.timestamp()
 
 if (
-    os.path.exists(LEADERBOARD_FILE)
-    and os.stat(LEADERBOARD_FILE).st_mtime < grace_period_ts
+    not os.path.exists(LEADERBOARD_JSON)
+    or os.stat(LEADERBOARD_JSON).st_mtime < grace_period_ts
 ):
-    print("Leaderboard file expired. Fetching from API.")
+    print("Leaderboard file missing or expired. Fetching from API.")
     try:
-        update_leaderboard()
+        update_leaderboard(args.year)
         print("Leaderboard successfully updated.")
     except:
-        print("An error occurred while updating the leaderboard. Aborting.")
+        print(
+            "An error occurred while updating the leaderboard. Aborting.",
+            file=sys.stderr,
+        )
         raise
 else:
     print("Leaderboard file still fresh. Not updating.")
 
-with open(LEADERBOARD_FILE) as fp:
+with open(LEADERBOARD_JSON) as fp:
     data = json.load(fp)
 
 days = range(1, 26)
