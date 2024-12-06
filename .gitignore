@@ -1,3 +1,6 @@
 demo*
 .vscode/
 .idea/
+*.pyc
+*.bak
+*~
