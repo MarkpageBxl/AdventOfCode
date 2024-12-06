@@ -1,61 +1,81 @@
 #!/usr/bin/env python
-#!/usr/bin/env python
 
-import re
-from typing import TextIO
-from collections.abc import Iterable
+import copy
 
-PATTERN = re.compile(
-    r"^(turn off|turn on|toggle) ([0-9]+),([0-9]+) through ([0-9]+),([0-9]+)$"
-)
+DIRECTIONS = {"^": (-1, 0), "v": (1, 0), ">": (0, 1), "<": (0, -1)}
 
 
-# command generator
-def commands(fp: TextIO) -> Iterable[tuple[str, int, int, int, int]]:
-    for line in fp:
-        match = PATTERN.match(line)
-        assert match
-        command, r1, c1, r2, c2 = match.groups()
-        r1, c1, r2, c2 = [int(x) for x in (r1, c1, r2, c2)]
-        yield command, r1, c1, r2, c2
+def next_direction(dir: str) -> str:
+    if dir == "^":
+        return ">"
+    if dir == ">":
+        return "v"
+    if dir == "v":
+        return "<"
+    if dir == "<":
+        return "^"
+    else:
+        assert False
 
 
-def turn_off(x: int) -> int:
-    return max(0, x - 1)
+def print_map(map):
+    for row in map:
+        print(" ".join(row))
 
-
-def turn_on(x: int) -> int:
-    return x + 1
-
-
-def toggle(x: int) -> int:
-    return x + 2
-
-
-def count_lights(lights: list[list[int]]):
-    count = 0
-    for sublist in lights:
-        count += sum(sublist)
-    return count
-
-
-# init matrix
-lights = []
-for i in range(1000):
-    lights.append([0] * 1000)
 
 with open("input") as fp:
-    for command, r1, c1, r2, c2 in commands(fp):
-        if command == "turn off":
-            func = turn_off
-        elif command == "turn on":
-            func = turn_on
-        elif command == "toggle":
-            func = toggle
-        start = (r1, c1)
-        end = (r2, c2)
-        for row in range(r1, r2 + 1):
-            for col in range(c1, c2 + 1):
-                lights[row][col] = func(lights[row][col])
+    base_map: list[list[str]] = [list(line.strip()) for line in fp]
 
-print(count_lights(lights))
+# locate guard
+base_guard_position = None
+for i, row in enumerate(base_map):
+    try:
+        base_guard_position = (i, row.index("^"))
+        break
+    except:
+        pass
+
+# we could narrow down candidates to only places where the guard goes, but meh
+candidate_obstructions = [
+    (x, y)
+    for x in range(len(base_map))
+    for y in range(len(base_map))
+    if base_map[x][y] not in ("#", "^", "v", "<", ">")
+]
+valid_obstructions = 0
+guard_position = base_guard_position
+base_guard_direction = base_map[guard_position[0]][guard_position[1]]
+guard_direction = base_guard_position
+for candidate_obstruction in candidate_obstructions:
+    map = copy.deepcopy(base_map)
+    guard_position = base_guard_position
+    guard_direction = base_guard_direction
+
+    # put new obstruction
+    map[candidate_obstruction[0]][candidate_obstruction[1]] = "O"
+    visited_positions: set[tuple[int, int, str]] = set()
+
+    while True:
+        if (guard_position[0], guard_position[1], guard_direction) in visited_positions:
+            valid_obstructions += 1
+            break
+        visited_positions.add((guard_position[0], guard_position[1], guard_direction))
+        candidate_pos = (
+            guard_position[0] + DIRECTIONS[guard_direction][0],
+            guard_position[1] + DIRECTIONS[guard_direction][1],
+        )
+        if (
+            candidate_pos[0] == len(map)
+            or candidate_pos[0] < 0
+            or candidate_pos[1] == len(map)
+            or candidate_pos[1] < 0
+        ):
+            # guard has exited map
+            break
+        if map[candidate_pos[0]][candidate_pos[1]] in ("#", "O"):
+            guard_direction = next_direction(guard_direction)
+        else:
+            guard_position = candidate_pos
+            map[guard_position[0]][guard_position[1]] = guard_direction
+
+print(valid_obstructions)
