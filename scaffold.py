@@ -8,6 +8,8 @@ from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader
 
+CHALLENGE_URL = "https://adventofcode.com/{year}/day/{day}"
+
 env = Environment(loader=FileSystemLoader("templates"), keep_trailing_newline=True)
 prog_template = env.get_template("prog.py.j2")
 
@@ -41,6 +43,7 @@ for part in (1, 2):
         "day": args.day,
         "part": part,
         "demo_input": demo_input,
+        "url": CHALLENGE_URL.format(year=args.year, day=args.day),
     }
     prog_path = target_dir / f"part{part}.py"
     with open(prog_path, "w") as fp:
