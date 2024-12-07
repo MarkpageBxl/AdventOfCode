@@ -11,13 +11,29 @@ from jinja2 import Environment, FileSystemLoader
 CHALLENGE_URL = "https://adventofcode.com/{year}/day/{day}"
 
 env = Environment(loader=FileSystemLoader("templates"), keep_trailing_newline=True)
+header_template = env.get_template("header.j2")
 prog_template = env.get_template("prog.py.j2")
 
 parser = argparse.ArgumentParser()
 parser.add_argument("year", type=int)
 parser.add_argument("day", type=int)
 parser.add_argument("--force", "-f", action="store_true")
+parser.add_argument("--header", "-H", action="store_true")
 args = parser.parse_args()
+
+if args.header:
+    for part in (1, 2):
+        context = {
+            "year": args.year,
+            "day": args.day,
+            "part": part,
+            "url": CHALLENGE_URL.format(year=args.year, day=args.day),
+            "fragment": "#part2" if part == 2 else "",
+        }
+        header = header_template.render(context)
+        print(header)
+        print()
+    sys.exit(0)
 
 padded_day = f"{args.day:02d}"
 target_dir: Path = Path(str(args.year)) / padded_day
@@ -44,7 +60,7 @@ for part in (1, 2):
         "part": part,
         "demo_input": demo_input,
         "url": CHALLENGE_URL.format(year=args.year, day=args.day),
-        "fragment": "#part2" if part == 2 else ""
+        "fragment": "#part2" if part == 2 else "",
     }
     prog_path = target_dir / f"part{part}.py"
     with open(prog_path, "w") as fp:
