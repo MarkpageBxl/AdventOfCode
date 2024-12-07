@@ -1,4 +1,12 @@
 #!/usr/bin/env python
+#
+# Solution for Advent of Code 2024
+# Day 3, part 1
+#
+# Challenge URL: https://adventofcode.com/2024/day/3
+#
+# Author: Markus Lindström <markus@markpage.be>
+#
 
 import re
 

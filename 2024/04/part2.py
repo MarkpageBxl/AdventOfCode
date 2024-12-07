@@ -1,4 +1,12 @@
 #!/usr/bin/env python
+#
+# Solution for Advent of Code 2024
+# Day 4, part 2
+#
+# Challenge URL: https://adventofcode.com/2024/day/4#part2
+#
+# Author: Markus Lindström <markus@markpage.be>
+#
 
 PATTERN = "MAS"
 

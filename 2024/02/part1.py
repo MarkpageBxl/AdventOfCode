@@ -1,4 +1,12 @@
 #!/usr/bin/env python
+#
+# Solution for Advent of Code 2024
+# Day 2, part 1
+#
+# Challenge URL: https://adventofcode.com/2024/day/2
+#
+# Author: Markus Lindström <markus@markpage.be>
+#
 
 safe_reports = 0
 

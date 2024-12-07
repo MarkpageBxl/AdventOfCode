@@ -1,4 +1,12 @@
 #!/usr/bin/env python
+#
+# Solution for Advent of Code 2024
+# Day 5, part 1
+#
+# Challenge URL: https://adventofcode.com/2024/day/5
+#
+# Author: Markus Lindström <markus@markpage.be>
+#
 
 # Bad approach. Turns out the ruleset is not a DAG!
 

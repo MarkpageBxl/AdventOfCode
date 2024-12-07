@@ -1,4 +1,12 @@
 #!/usr/bin/env python
+#
+# Solution for Advent of Code 2015
+# Day 6, part 1
+#
+# Challenge URL: https://adventofcode.com/2015/day/6
+#
+# Author: Markus Lindström <markus@markpage.be>
+#
 
 import re
 from typing import TextIO

@@ -1,4 +1,12 @@
 #!/usr/bin/env python
+#
+# Solution for Advent of Code 2024
+# Day 6, part 1
+#
+# Challenge URL: https://adventofcode.com/2024/day/6
+#
+# Author: Markus Lindström <markus@markpage.be>
+#
 
 DIRECTIONS = {"^": (-1, 0), "v": (1, 0), ">": (0, 1), "<": (0, -1)}
 
