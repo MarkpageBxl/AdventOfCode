@@ -6,8 +6,8 @@ Solutions repository for the Advent of Code challenges.
 == Introduction
 
 2024 is my very first experience with Advent of Code, so I'm clearly
-not competitive on the global leaderboard. Enjoying myself greatly
-all the same!
+not competitive on the global leaderboard. Enjoying myself greatly all
+the same!
 
 Since I accidentally solved a problem for 2015 at one point, I figured
 this repo could contain solutions for all AoC editions.
@@ -20,6 +20,18 @@ documentation searches, to the test.
 
 == Languages
 
-Python is by far my favourite scripting language, the one with which
-I can yield results the fastest, and a language I have taught at
-university. It is thus my weapon of choice for these challenges.
+=== Python
+
+Python is by far my favourite scripting language, the one with which I can
+yield results the fastest, and a language I have taught at university. It
+is thus my weapon of choice for these challenges.
+
+I use Python with the following constraints to resolve the AoC challenges
+(as of December 2024):
+
+* Using the standard library and constructs available in Python 3.11
+(or, alternatively, whatever Python version is shipped by default in
+the current stable version of Debian GNU/Linux)
+
+* No third party libraries (NumPy, etc.). To be fair, the standard
+library is humongous already.
