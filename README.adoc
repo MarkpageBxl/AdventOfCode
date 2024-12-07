@@ -32,7 +32,8 @@ I use Python with the following constraints to resolve the AoC challenges
 
 * Using the standard library and constructs available in Python 3.11
 (or, alternatively, whatever Python version is shipped by default in the
-current stable version of link:https://www.debian.org[Debian GNU/Linux])
+current link:https://www.debian.org/releases/stable/[stable] version of
+link:https://www.debian.org[Debian GNU/Linux])
 
 * No third party libraries (NumPy, etc.). To be fair, the standard
 library is humongous already compared to other languages, which is a
