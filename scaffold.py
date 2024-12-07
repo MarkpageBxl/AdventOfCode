@@ -13,6 +13,7 @@ CHALLENGE_URL = "https://adventofcode.com/{year}/day/{day}"
 env = Environment(loader=FileSystemLoader("templates"), keep_trailing_newline=True)
 header_template = env.get_template("header.j2")
 prog_template = env.get_template("prog.py.j2")
+test_template = env.get_template("tests.py.j2")
 
 parser = argparse.ArgumentParser()
 parser.add_argument("year", type=int)
@@ -66,5 +67,10 @@ for part in (1, 2):
     with open(prog_path, "w") as fp:
         fp.write(prog_template.render(context))
     os.chmod(prog_path, 0o755)
+
+test_path = target_dir / "tests.py"
+with open(test_path, "w") as fp:
+    fp.write(test_template.render(context))
+os.chmod(test_path, 0o755)
 
 print("Scaffold successfully generated in:", target_dir)
