@@ -1,5 +1,9 @@
 {% include "header.j2" %}
 
-with open("{{ demo_input }}") as fp:
-    for line in fp:
-        pass
+def main():
+    with open("{{ demo_input }}") as fp:
+        for line in fp:
+            pass
+
+if __name__ == "__main__":
+    main()
