@@ -6,11 +6,14 @@ Code] (AoC) challenges.
 
 == Introduction
 
-2024 is my very first experience with AoC, and I'm clearly not competitive
-on the global leaderboard. Enjoying myself greatly all the same!
+link:https://adventofcode.com/2024[2024] is my very first experience with
+AoC, and I'm clearly not competitive on the global leaderboard. Enjoying
+myself greatly all the same!
 
-Since I accidentally solved a problem for 2015 at one point, I figured
-this repo could contain solutions for all AoC editions.
+Since I accidentally solved a problem for
+link:https://adventofcode.com/2015[2015] at one point during the 2024
+edition (don't ask), I've decide to put solutions for any previous AoC
+editions on this repo as well.
 
 == Ethics
 
