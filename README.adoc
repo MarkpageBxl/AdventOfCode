@@ -12,7 +12,7 @@ myself greatly all the same!
 
 Since I accidentally solved a problem for
 link:https://adventofcode.com/2015[2015] at one point during the 2024
-edition (don't ask), I've decide to put solutions for any previous AoC
+edition (don't ask), I've decided to put solutions for any previous AoC
 editions on this repo as well.
 
 == Ethics
