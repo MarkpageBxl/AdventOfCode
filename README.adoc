@@ -41,3 +41,9 @@ link:https://www.debian.org[Debian GNU/Linux])
 * No third party libraries (NumPy, etc.). To be fair, the standard
 library is humongous already compared to other languages, which is a
 boon for AoC challenges.
+
+* Assume Python 3.11 or above, which implies some language semantics that
+have changed since 3.0, such as key insertion order being preserved in
+dictionaries.  Thus, there is no guarantee that solutions written here
+will yield correct results (or even run, due to more recent language
+constructs such as the walrus operator) with Python 3.10 or below.
