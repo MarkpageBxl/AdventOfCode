@@ -15,11 +15,17 @@
 # 8 opcodes, single operand
 # two adressing modes: literal, combo
 
+import logging
 import re
 from typing import TextIO
 
+from utils import disassemble_instr
+
 REGISTER_RE = re.compile(r"^Register ([A-C]): (-?[0-9]+)$")
 PROGRAM_RE = re.compile(r"Program: (.*)$")
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger("asm")
 
 
 def load_registers(fp: TextIO) -> tuple[int, int, int]:
@@ -82,6 +88,8 @@ def execute(
     output_buffer = []
     while 0 <= ip < len(program):
         opcode, operand = program[ip]
+        dasm = disassemble_instr(opcode, operand)
+        logger.debug("INSTR: %s", dasm)
         if opcode == 0:  # adv
             a = a >> combo(operand, (a, b, c))
         elif opcode == 1:  # bxl
@@ -93,16 +101,20 @@ def execute(
                 ip = operand - 1
                 # assert alignment
                 assert operand % 2 == 0
+                logger.debug("=" * 15)
         elif opcode == 4:  # bxc
             b = b ^ c
         elif opcode == 5:  # out
-            output_buffer.append(combo(operand, (a, b, c)) & 0b111)
+            out = combo(operand, (a, b, c)) & 0b111
+            output_buffer.append(out)
+            logger.debug("OUT: %d", out)
         elif opcode == 6:  # bdv
             b = a >> combo(operand, (a, b, c))
         elif opcode == 7:  # cdv
             c = a >> combo(operand, (a, b, c))
         else:
             assert False
+        logger.debug("REGS: A=%d B=%d C=%d", a, b, c)
         ip += 1
     registers = (a, b, c)
     print(",".join([str(x) for x in output_buffer]))
